@@ -1,0 +1,63 @@
+# Azure DevOps Pipeline
+
+trigger:
+  branches:
+    include:
+      - main
+      - master
+      - develop
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+- stage: Build
+  displayName: 'Build Docker Image'
+  jobs:
+  - job: Build
+    displayName: 'Build'
+    steps:
+    - task: Docker@2
+      displayName: 'Build Docker image'
+      inputs:
+        command: build
+        repository: rppg
+        dockerfile: '**/Dockerfile'
+        tags: |
+          latest
+          $(Build.BuildId)
+
+- stage: Test
+  displayName: 'Test'
+  dependsOn: Build
+  jobs:
+  - job: Test
+    displayName: 'Test Docker Image'
+    steps:
+    - task: Docker@2
+      displayName: 'Test image'
+      inputs:
+        command: run
+        containerRegistry: 'Docker Hub'
+        repository: rppg
+        command: 'run --rm rppg:latest python --version'
+
+- stage: Deploy
+  displayName: 'Deploy'
+  dependsOn: Test
+  condition: succeeded()
+  jobs:
+  - deployment: Deploy
+    displayName: 'Deploy to Registry'
+    environment: 'production'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: Docker@2
+            displayName: 'Push to registry'
+            inputs:
+              command: push
+              repository: rppg
+              containerRegistry: 'Docker Hub'
+

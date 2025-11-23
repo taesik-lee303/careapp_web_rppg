@@ -1,0 +1,39 @@
+========================================
+MacBook 전송용 필수 파일 목록
+========================================
+
+[필수 파일 - 반드시 전송]
+----------------------------
+1. main_mediapipe.py          - 메인 실행 파일
+2. rppg_mediapipe.py          - rPPG 측정 모듈
+3. mqtt_client.py             - MQTT 클라이언트
+4. camera_utils.py            - 카메라 유틸리티
+5. mqtt_config.json           - MQTT 설정 파일
+6. requirements.txt           - Python 패키지 목록
+7. Dockerfile                  - Docker 이미지 빌드
+8. docker-compose.yml         - Docker Compose 설정
+
+[선택 파일 - 있으면 좋음]
+----------------------------
+9. README.md                  - 사용 설명서
+10. test_webcam.py            - 웹캠 테스트
+11. list_cameras.py           - 카메라 목록 확인
+12. mqtt_example.py           - MQTT 수신 예제
+13. DOCKER_GUIDE.md           - Docker 가이드
+14. docker-run.sh             - Mac/Linux 실행 스크립트
+
+[제외 가능 - 전송 불필요]
+----------------------------
+- main.py                     - dlib 버전 (MediaPipe만 사용 시)
+- rppg.py                     - dlib 버전 (MediaPipe만 사용 시)
+- requirements-dlib.txt       - dlib 패키지 목록
+- install_dlib_windows.md     - Windows용 dlib 가이드
+- shape_predictor_68_face_landmarks.dat  - dlib 모델 (약 100MB)
+- __pycache__/                - Python 캐시
+- *.pyc, *.pyo               - 컴파일된 파일
+
+========================================
+총 필수 파일: 8개
+총 선택 파일: 6개
+========================================
+

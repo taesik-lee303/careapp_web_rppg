@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  rppg:
+    build: .
+    container_name: rppg_measurement
+    image: rppg:latest
+    
+    # 웹캠 디바이스 접근 (Linux/Mac)
+    # Mac에서는 /dev/video0 대신 다른 경로일 수 있음
+    devices:
+      - /dev/video0:/dev/video0
+    
+    # 환경 변수
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
+      - MQTT_ENABLED=${MQTT_ENABLED:-true}
+      - MQTT_BROKER_HOST=${MQTT_BROKER_HOST:-203.250.148.52}
+      - MQTT_BROKER_PORT=${MQTT_BROKER_PORT:-20516}
+      - MQTT_TOPIC=${MQTT_TOPIC:-rppg/vital_signs}
+    
+    # 볼륨 마운트 (설정 파일 등)
+    volumes:
+      - ./mqtt_config.json:/app/mqtt_config.json:ro
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw  # X11 forwarding (Linux/Mac)
+    
+    # 네트워크 (MQTT 연결용)
+    network_mode: host
+    
+    # 재시작 정책
+    restart: unless-stopped
+    
+    # 표준 입력/출력 연결 (대화형 모드)
+    stdin_open: true
+    tty: true
+    
+    # Mac에서 GUI를 표시하려면 추가 설정 필요
+    # privileged: false  # 보안상 false 권장
+

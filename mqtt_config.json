@@ -1,0 +1,15 @@
+{
+  "broker": {
+    "host": "203.250.148.52",
+    "port": 20516,
+    "username": null,
+    "password": null
+  },
+  "topic": {
+    "name": "rppg/vital_signs",
+    "format": "json"
+  },
+  "qos": 0,
+  "enabled": true
+}
+

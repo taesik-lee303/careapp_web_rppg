@@ -1,0 +1,51 @@
+# GitLab CI/CD 파이프라인
+
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+
+before_script:
+  - docker info
+
+build:
+  stage: build
+  script:
+    - echo "Building Docker image..."
+    - docker build -t rppg:latest .
+    - docker images | grep rppg
+  only:
+    - main
+    - master
+    - develop
+
+test:
+  stage: test
+  script:
+    - echo "Testing Docker image..."
+    - docker build -t rppg:test .
+    - docker run --rm rppg:test python --version
+  only:
+    - main
+    - master
+    - develop
+    - merge_requests
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying to registry..."
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:latest
+    - docker tag $CI_REGISTRY_IMAGE:latest $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+  only:
+    - main
+    - master
+  when: manual
+
